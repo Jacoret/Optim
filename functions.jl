@@ -1,4 +1,4 @@
-# Fonctions f1 et f2 --------------------------------
+# Fonctions f1, f2 et f4 --------------------------------
 function f1(U::Vector)
     x = transpose(U) * S * U - transpose(B) * U
 	return x[1,1]
@@ -9,6 +9,10 @@ function f2(U::Vector)
   return y[1,1]
 end
 
+function f4(U::Vector)
+    x = f1(U) + 10*sin(2*f1(U))
+    return x[1,1]
+end
 
 # Gradients analytiques ------------------------------
 function df1!(U::Vector, dfU::Vector)
@@ -18,6 +22,11 @@ end
 
 function df2!(U::Vector, dfU::Vector)
     dfU[:] = (S+transpose(S)) * U + (1+U).*exp(U)
+    return dfU
+end
+
+function df4!(U::Vector, dfU::Vector)
+    dfU[:] = df1!(U, zeros(Float64, 5)) + 20*df1!(U, zeros(Float64, 5))*cos(2*f1(U))
     return dfU
 end
 
@@ -38,6 +47,16 @@ function approxdf2!(U::Vector, dfU::Vector)
         Ueps = copy(U)
         Ueps[i] *= (1+epsilon)
         dfU[i] = (f2(Ueps)-f2(U))/(epsilon*U[i])
+    end
+    return dfU
+end
+
+function approxdf4!(U::Vector, dfU::Vector)
+    epsilon = 1e-4
+    for i = 1:length(U)
+        Ueps = copy(U)
+        Ueps[i] *= (1+epsilon)
+        dfU[i] = (f4(Ueps)-f4(U))/(epsilon*U[i])
     end
     return dfU
 end
