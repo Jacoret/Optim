@@ -49,3 +49,10 @@ println("u1min : $u1min, f1min : $f1min")
 # pour f2
 u2min, f2min = gradient_rho_adaptatif(f2, df2!, U0, 1e-4)
 println("u2min : $u2min, f2min : $f2min")
+
+@time optimize(f1, df1!, U0, BFGS())
+@time optimize(f1, df1!, U0, BFGS())
+@time optimize(f1, df1!, U0, ConjugateGradient())
+@time optimize(f1, df1!, U0, ConjugateGradient())
+@time optimize(f1, df1!, U0, GradientDescent())
+@time optimize(f1, df1!, U0, GradientDescent())
