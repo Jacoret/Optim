@@ -12,5 +12,17 @@ end
 
 posit(-0.5)
 
-function penal(U::vector)
-    if
+function penal(U::Vector)
+    b = 0
+    for i in 1:5
+        if U[i]<0
+            b = posit(-U[i])
+        elseif U[i]>1
+            b = posit(U[i]-1)
+        end
+    end
+    return b
+end
+
+
+penal([0.,1.,10.,0.,.5])
