@@ -4,23 +4,48 @@ include("functions.jl")
 
 println("\n Start of the Program ... \n")
 
+#--------------------------------------------------------
+#--------------------------------------------------------
 
-println("df1 : $(df1!(Umin, zeros(Float64, 5)))")
-println("approxdf1 : $(approxdf1!(Umin, zeros(Float64, 5)))")
+# Question 1 --------------------------------------------
+# a. b. c. : cf functions.jl
+# Quelques tests :
+U = [1.0,2.0,3.0,4.0,5.0]
 
-df2_Umin = df2!(Umin, zeros(Float64, 5))
-println("df2 en Umin : $df2_Umin")
-approxdf2_Umin = approxdf2!(Umin, zeros(Float64, 5))
-println("approxdf2 en Umin : $approxdf2_Umin")
+# f1 & f2
+println("f1(U) = $(f1(U)) , f2(U) = $(f2(U))")
 
-xmin, fmin = gradient_rho_constant(f1, df1!, U0, 0.001, 1e-4)
-println("xmin : $xmin, fmin : $fmin")
-println("f1(Umin) = $(f1(Umin)) , f2(Umin) = $(f2(Umin))")
+# df1 analytique et approximé
+println("df1 : $(df1!(U, zeros(Float64, 5)))")
+println("approxdf1 : $(approxdf1!(U, zeros(Float64, 5)))")
 
-xmin, fmin = gradient_rho_adaptatif(f1, df1!, U0, 1e-4)
-println("xmin : $xmin, fmin : $fmin")
-println("f1(Umin) = $(f1(Umin)) , f2(Umin) = $(f2(Umin))")
+# df2 analytique et approximé
+println("df2 : $(df2!(U, zeros(Float64, 5)))")
+println("approxdf1 : $(approxdf2!(U, zeros(Float64, 5)))")
 
-res = optimize(f1, df1!, U0, BFGS())
-res = optimize(f1, df1!, U0, ConjugateGradient())
-res = optimize(f1, df1!, U0, GradientDescent())
+
+# Question 2 --------------------------------------------
+# cf functions.jl, le vecteur rho est dans initializations.jl
+# Quelques tests :
+
+# Méthode du Gradient à pas constant :
+# Pour f1 :
+for i=1:5
+    umin,fmin = gradient_rho_constant(f1, df1!, U0, rho[i], 1e-4)
+    println("u1min = $umin, f1min = $fmin")
+end
+
+# Pour f2 :
+for i=1:5
+    umin,fmin = gradient_rho_constant(f2, df2!, U0, rho[i], 1e-4)
+    println("u2min = $umin, f2min = $fmin")
+end
+
+# Méthode du gradient adaptatif
+# pour f1
+u1min, f1min = gradient_rho_adaptatif(f1, df1!, U0, 1e-4)
+println("u1min : $u1min, f1min : $f1min")
+
+# pour f2
+u2min, f2min = gradient_rho_adaptatif(f2, df2!, U0, 1e-4)
+println("u2min : $u2min, f2min : $f2min")
