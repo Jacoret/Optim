@@ -1,21 +1,7 @@
+# Fonctions f1 et f2 --------------------------------
 function f1(U::Vector)
     x = transpose(U) * S * U - transpose(B) * U
 	return x[1,1]
-end
-
-function df1!(U::Vector, dfU::Vector)
-    dfU[:] = (S + transpose(S)) * U - B
-    return dfU
-end
-
-function approxdf1!(U::Vector, dfU::Vector)
-    epsilon = 1e-4
-    for i = 1:length(U)
-        Ueps = copy(U)
-        Ueps[i] *= (1+epsilon)
-        dfU[i] = (f1(Ueps)-f1(U))/(epsilon*U[i])
-    end
-    return dfU
 end
 
 function f2(U::Vector)
@@ -23,8 +9,26 @@ function f2(U::Vector)
   return y[1,1]
 end
 
+
+# Gradients analytiques ------------------------------
+function df1!(U::Vector, dfU::Vector)
+    dfU[:] = (S + transpose(S)) * U - B
+    return dfU
+end
+
 function df2!(U::Vector, dfU::Vector)
     dfU[:] = (S+transpose(S)) * U + (1+U).*exp(U)
+    return dfU
+end
+
+# Gradients approximés -------------------------------
+function approxdf1!(U::Vector, dfU::Vector)
+    epsilon = 1e-4
+    for i = 1:length(U)
+        Ueps = copy(U)
+        Ueps[i] *= (1+epsilon)
+        dfU[i] = (f1(Ueps)-f1(U))/(epsilon*U[i])
+    end
     return dfU
 end
 
@@ -38,6 +42,9 @@ function approxdf2!(U::Vector, dfU::Vector)
     return dfU
 end
 
+# Méthode du gradient ------------------------------
+
+# rho constant
 function gradient_rho_constant(f::Function, df!::Function, U0::Vector, rho::Float64, tol::Float64)
     # Initialisation
     Unow = copy(U0)
@@ -55,6 +62,7 @@ function gradient_rho_constant(f::Function, df!::Function, U0::Vector, rho::Floa
     return Unext, fnext
 end
 
+# rho adaptatif
 function gradient_rho_adaptatif(f::Function, df!::Function, U0::Vector, tol::Float64)
     n_test = 1000
     # Initialisation
