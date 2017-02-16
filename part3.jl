@@ -26,3 +26,14 @@ end
 
 
 penal([0.,1.,10.,0.,.5])
+
+
+function f1penal(U::Vector, epsilon::Float64)
+    f = f1(U) + b(u)/epsilon
+    return f
+end
+
+function f2penal(U::Vector, epsilon::Float64)
+    f = f2(U) + b(u)/epsilon
+    return f
+end
